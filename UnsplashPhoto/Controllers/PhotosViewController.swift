@@ -26,8 +26,9 @@ class PhotosViewController: UIViewController {
     private let idPhotosCollection = "idPhotosCollection"
     
     var results: [ResultPhoto] = []
-    
     var timer: Timer?
+    
+    public var testPhotoArray = [UIImage]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,9 +70,7 @@ class PhotosViewController: UIViewController {
     func fetchPhotos(query: String) {
         
         let urlString = "https://api.unsplash.com/search/photos?page=1&per_page=50&query=\(query)&client_id=OcVkHMcsE5eOqkXQS00m-Oy4iZXNTR9EYHntd2lZraU"
-        guard let url = URL(string: urlString) else {
-            return
-        }
+        guard let url = URL(string: urlString) else { return }
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
             guard let data = data, error == nil else { return }
             
@@ -79,6 +78,7 @@ class PhotosViewController: UIViewController {
                 let jsonResult = try JSONDecoder().decode(APIresponse.self, from: data)
                 DispatchQueue.main.async {
                     self?.results = jsonResult.results
+                    self?.test()
                     self?.collectionView.reloadData()
                 }
             } catch {
@@ -87,21 +87,40 @@ class PhotosViewController: UIViewController {
         }
         task.resume()
     }
+    
+    func test() {
+//        let imageURLString = results[indexPath.row].urls.regular
+        for urlString in 0..<results.count {
+            
+            let imageURLString = results[urlString].urls.regular
+            
+            guard let url = URL(string: imageURLString) else { return }
+            
+            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+                guard let data = data, error == nil else { return }
+                DispatchQueue.main.async { [weak self] in
+                    guard let image = UIImage(data: data) else { return }
+    //                self?.imageView.image = image
+                    self?.testPhotoArray.append(image)
+                    self?.collectionView.reloadData()
+                }
+            } .resume()
+        }
+    }
 }
 
 //MARK: - UICollectionViewDataSource
 
 extension PhotosViewController: UICollectionViewDataSource {
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        results.count
+        testPhotoArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let imageURLString = results[indexPath.row].urls.regular
+//        let imageURLString = results[indexPath.row].urls.regular
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: idPhotosCollection, for: indexPath) as! PhotosCollectionViewCell
-        cell.configure(with: imageURLString)
+        cell.imageView.image = testPhotoArray[indexPath.row]
+//        cell.configure(with: imageURLString)
         return cell
 
     }
@@ -115,6 +134,7 @@ extension PhotosViewController: UICollectionViewDelegate {
         let detailsPhotoViewController = DetailsPhotoViewController()
         let photo = results[indexPath.row]
         detailsPhotoViewController.detailPhotoResult = photo
+        detailsPhotoViewController.photoImageView.image = testPhotoArray[indexPath.row]
         navigationController?.pushViewController(detailsPhotoViewController, animated: true)
     }
 }

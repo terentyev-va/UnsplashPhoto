@@ -9,7 +9,7 @@ import UIKit
 
 class PhotoDetailsInfoCell: UITableViewCell {
     
-    private let photoImageView: UIImageView = {
+    let photoImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.backgroundColor = .white
         imageView.layer.cornerRadius = 10
@@ -34,6 +34,24 @@ class PhotoDetailsInfoCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        photoImageView.image = nil
+    }
+    
+    func configure(with urlString: String) {
+        
+        guard let url = URL(string: urlString) else { return }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let data = data, error == nil else { return }
+            DispatchQueue.main.async {
+                let image = UIImage(data: data)
+                self?.photoImageView.image = image
+            }
+        } .resume()
     }
     
     private func setupViews() {

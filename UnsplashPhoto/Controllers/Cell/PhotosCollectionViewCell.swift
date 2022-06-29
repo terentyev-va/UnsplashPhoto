@@ -9,7 +9,7 @@ import UIKit
 
 class PhotosCollectionViewCell: UICollectionViewCell {
     
-    let imageView: UIImageView = {
+    var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -46,6 +46,8 @@ class PhotosCollectionViewCell: UICollectionViewCell {
         } .resume()
     }
 }
+
+//MARK: - SetConstraints
 
 extension PhotosCollectionViewCell {
     

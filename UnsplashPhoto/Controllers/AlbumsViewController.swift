@@ -18,6 +18,8 @@ class AlbumViewController: UIViewController {
     
     let idTableViewCell = "idTableViewCell"
     
+    var testPhoto11 = [UIImage]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,7 +45,7 @@ class AlbumViewController: UIViewController {
 
 extension AlbumViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        testPhoto11.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

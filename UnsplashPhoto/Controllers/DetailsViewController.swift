@@ -9,9 +9,10 @@ import UIKit
 
 class DetailsPhotoViewController: UIViewController {
     
-    private let photoImageView: UIImageView = {
+    let photoImageView: UIImageView = {
        let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .none
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -20,7 +21,6 @@ class DetailsPhotoViewController: UIViewController {
     private lazy var saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBackgroundImage(UIImage(named: "saveButton"), for: .normal)
-        
         button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -109,9 +109,11 @@ class DetailsPhotoViewController: UIViewController {
     }
     
     @objc private func saveButtonTapped() {
-        print("save")
+//        detailsPhotoViewController.photoImageView.image = test[indexPath.row]
     }
 }
+
+//MARK: - SetConstraints
 
 extension DetailsPhotoViewController {
     
